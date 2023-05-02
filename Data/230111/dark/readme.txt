@@ -1,0 +1,1 @@
+In this directory, you should put dark file.(which ends with ".root)
