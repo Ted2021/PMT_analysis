@@ -1,1 +1,6 @@
-sample
+##########
+READ ME
+##########
+
+-Anlaysis fig
+
