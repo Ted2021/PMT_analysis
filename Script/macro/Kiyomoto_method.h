@@ -7,6 +7,15 @@
 #include "vector"
 #include "cmath"
 
+/*
+###CONTENTS###
+FindPeakValue: パルスのピークを探索する関数
+CheckConv: パルスの収束を探索する関数(指定したcell数の範囲で収束したか)
+JudgeAPevent:　あらかじめ求めておいたAP_eventがノイズか否か判定する関数
+##############
+*/
+
+
 /*パルスのピーク値を探す関数(一つ先の値と比較する)
 MIN_OR_MAX == 1の時は、最大値のピークを返す
 MIN_OR_MAX == 0の時は、最小値のピークを返す
@@ -16,7 +25,6 @@ flaot arr[]: 波形の入った配列(微分波形でも生波形でも良い)
 int seg_start: ピーク探査を始めるsegmentの値
 int MIN_OR_MAX: ピークの最大値(=1)or最小値(=0)
 #########
-
 */
 int FindPeakValue(float arr[], int seg_start, int MIN_OR_MAX = 1)
 {
@@ -40,6 +48,18 @@ int FindPeakValue(float arr[], int seg_start, int MIN_OR_MAX = 1)
 }
 
 /*波形が収束したか確認する関数
+FW_OR_BWD: パルスの立ち下がり(=1)、パルスの立ち上がり(=0)で、パルスの両端の位置を探索する
+
+###引数###
+arr[]: 波形の入った配列(生波形)
+arr2[]: 波形の入った配列(微分波形)
+seg_start: ピーク探査を始めるsegmentの値
+limit: パルスの探索範囲
+DIF_THRES: 微分波形の立ち上がりの閾値
+PH_CONV: パルス波形の収束閾値
+DIFF_CONV: 微分波形の収束閾値
+FW_OR_BWD: パルスの立ち上がりor立ち下がり
+#########
 
 */
 int CheckConv(float arr[], float arr2[], int seg_start, int limit, float DIF_THRES, float PH_CONV, float DIFF_CONV, int FW_OR_BWD = 1)
@@ -84,6 +104,33 @@ int CheckConv(float arr[], float arr2[], int seg_start, int limit, float DIF_THR
 
 }
 
+//APイベントをノイズ or AP_evnet or QuickDouble(連続してピークが到来した)の3つにGratingする関数
+
+/*
+###引数###
+filesrc_s: 生波形のROOTファイル
+treename_s: 生波形のROOTファイルのTree名
+filesrc_d:　微分波形のROOTファイル
+treename_d: 微分波形のROOTファイルのTree名
+slice: ROOTファイルのsegの長さ(1024)
+DIF_THRES: 微分波形の閾値
+PH_THRES: 生波形の閾値
+PH_CONV: 生波形の収束閾値
+DIFF_CONV: 微分波形の収束閾値
+event: AP_eventのイベントが入った配列
+seg: AP_evnetのイベントが入った配列
+par: Gratingした結果(1:ノイズ、2:AP_event, 3:AP_event(QuickDouble))
+par2: AP_eventの開始位置
+par3: AP_evneのピーク位置
+par4: AP_eventのankle位置
+par5: AP_eventの終了位置
+par6: AP_eventの微分波形のピーク値
+par7: AP_eventのピーク値
+par8: AP_evnetのankle値
+limit_d: 収束範囲閾値(開始位置)
+limit_u: 収束範囲閾値(終了位置)
+
+*/
 void JudgeAPevent(TString filesrc_s, TString treename_s, TString filesrc_d, TString treename_d, 
     int slice, float DIF_THRES, float PH_THRES, float PH_CONV, float DIFF_CONV, 
     std::vector<int> &event, std::vector<int> &seg,

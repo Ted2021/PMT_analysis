@@ -139,6 +139,7 @@ void CalcDiffWform3(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     TTree* tr_s = (TTree*)f_s->Get(treename);
 
     //配列を格納するためのバッファ変数(Source)
+    //###ここを一般化しておきたい###
     float time_s[length];
     float wfp_s[length];
     float wfn_s[length];
@@ -147,6 +148,7 @@ void CalcDiffWform3(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     tr_s->SetBranchAddress("wform1",wfp_s);
     tr_s->SetBranchAddress("wform0",wfn_s);
     tr_s->SetBranchAddress("stopcell", &sc_s);
+    //###ここまで###
 
     //総イベント数を取得
     int nEve = tr_s->GetEntries(); 
@@ -160,15 +162,18 @@ void CalcDiffWform3(TString filesrc, TString treename, TString Diffwf_ROOT_file,
         //セグメントの数-1だけ繰り返す 差分を取るため、segment1から始める (DRS4では1024固定)
         for(int l=1;l<length;l++)
         {   
+            //###ここを一般化しておきたい###
             if((l+sc_s)%1024==392)
             {
                 wfp_s[l] = (wfp_s[l-1] + wfp_s[l+1])*0.5; 
                 wfn_s[l] = (wfn_s[l-1] + wfn_s[l+1])*0.5;
             }
+            //###ここまで###
 
             //取得時間を新しいROOTファイルのBranchにinput
             time[l] = time_s[l];
             //1イベント前との差動電圧の差(微分電圧)を新しいROOTファイルのBrachにinput
+            //###ここも修正必要あり
             diffwf[l] = (wfp_s[l] - wfn_s[l] - av_wf[l]) - (wfp_s[l-1] - wfn_s[l-1] - av_wf[l-1]);
         }
         tree->Fill();
