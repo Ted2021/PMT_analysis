@@ -53,7 +53,7 @@ void CalcPEPulseHeight(TString filesrc, TString treename, int int_start, int int
 
 }
 
-
+//生波形とSouceの平均波形の差分を求める関数(ROOTファイルとして書き出す)
 void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString treename_new, std::vector<float> &av_wf, int length = 1024)
 {
     //ROOTの初期設定
@@ -77,6 +77,8 @@ void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString
     TTree* tr_s = (TTree*)f_s->Get(treename);
 
     //配列を格納するためのバッファ変数(Source)
+
+    //####ここを一般化したい####
     float time_s[length];
     float wfp_s[length];
     float wfn_s[length];
@@ -85,6 +87,7 @@ void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString
     tr_s->SetBranchAddress("wform1",wfp_s);
     tr_s->SetBranchAddress("wform0",wfn_s);
     tr_s->SetBranchAddress("stopcell", &sc_s);
+    //####ここまで####
 
     //総イベント数を取得
     int nEve = tr_s->GetEntries();
@@ -99,11 +102,13 @@ void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString
         //セグメントの数-1だけ繰り返す 差分を取るため、segment1から始める (DRS4では1024固定)
         for(int l=0;l<length;l++)
         {   
+            //###ここを一般化したらいらない####
             if((l+sc_s)%1024==392)
             {
                 wfp_s[l] = (wfp_s[l-1] + wfp_s[l+1])*0.5; 
                 wfn_s[l] = (wfn_s[l-1] + wfn_s[l+1])*0.5;
             }
+            //###ここまで###
 
             //取得時間を新しいROOTファイルのBranchにinput
             time[l] = time_s[l];
@@ -304,6 +309,71 @@ void CountAPeventFromPH3(TString filesrc, TString treename, int seg, float PH_TH
                     {
                         AP_segment = l;
                         AP_PH_max = wform;
+                    }
+                }
+                Counts += 1;
+            }
+            else
+            {
+                if(Counts !=0)
+                {
+                    if (Counts >= CONTI_THES)
+                    {
+                        par.push_back(AP_event);
+                        par2.push_back(AP_segment);
+                        par3.push_back(AP_PH_max);
+                        par4.push_back(Counts);
+                        Counts = 0;
+                    }
+                    else
+                    {
+                        Counts = 0;
+                    }
+                }
+            }
+        }    
+    }
+    f->Close();
+}
+
+//CalcWformで得たROOTファイルを用いてAP_eventをカウントする関数(連続してn点を超えた場合)
+void CountAPeventFromPH4(TString filesrc, TString treename, int seg, float PH_THRES, int CONTI_THES, int int_start, int int_end, std::vector<float> &av_wf, std::vector<int> &par, std::vector<int> &par2, std::vector<float> &par3, std::vector<int> & par4)
+{
+    TFile* f = TFile::Open(filesrc);
+    TTree* tr = (TTree*)f->Get(treename);
+    float time[seg];
+    float wform[seg];
+    tr->SetBranchAddress("time",time);
+    tr->SetBranchAddress("wform", wform);
+
+    int nEve = tr->GetEntries();
+
+    for(int i=0;i<nEve;i++)
+    {
+        //各変数の初期化
+        int AP_event = i;   //APイベントのイベント番号
+        int AP_segment = int_start; //APイベントのピーク位置(セグメント番号)
+        float AP_PH_max = 0;    //APイベントスタート位置における微分波形の波高値
+        float wform;
+        int Counts = 0;
+
+        tr->GetEntry(i);
+        for(int l=int_start;l<int_end;l++)
+        {
+
+            if(wform[l]  > PH_THRES)
+            {
+                if(Counts == 0)
+                {
+                    AP_segment = l;
+                    AP_PH_max = wform[l];
+                }
+                else
+                {
+                    if(wform[l] > AP_PH_max)
+                    {
+                        AP_segment = l;
+                        AP_PH_max = wform[l];
                     }
                 }
                 Counts += 1;
