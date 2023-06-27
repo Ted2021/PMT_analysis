@@ -1,4 +1,3 @@
-
 #include "TString.h"
 #include "TFile.h"
 #include "TTree.h"
@@ -7,6 +6,18 @@
 #include "vector"
 #include "cmath"
 
+//APの電荷量を計算する関数(APイベントのスタートとエンドがわかっている場合)
+/*
+###引数###
+filesrc:Sourceファイル
+treename:SourceのTree名
+filesrc_d:Darkファイル
+treename_d:DarkのTree名
+event:AfterPulseのイベント
+s_slice:AfterPulseのスライスのスタート
+e_slice:AfterPulseのスライスのエンド
+charge:計算したAfterPulseの電荷量
+*/
 void clac_chrg_PSP_1(TString filesrc, TString treename, TString filesrc_d, TString treename_d, std::vector<int> &event, std::vector<int> &s_silce, std::vector<int> &e_slice, std::vector<float> &charge)
 {
     TFile* f  = TFile::Open(filesrc);
@@ -58,4 +69,3 @@ void clac_chrg_PSP_1(TString filesrc, TString treename, TString filesrc_d, TStri
     f->Close();
     f_d->Close();
 }
-

@@ -6,7 +6,20 @@
 #include "vector"
 #include "cmath"
 
-
+//櫻井法でのAfterPulseのカウンティング
+/*
+###引数###
+filesrc:sourceファイル
+treenmae:sourceのTree名
+threshold:APとノイズを区別する閾値(Pluse Height)
+par:dark平均波形
+par2:APのイベント
+par3:APのセグメント
+par4:ピーク波高値
+par5:電荷量
+par6:計算されたp.e.
+start:スタートセル
+*/
 void count_sakurai(TString filesrc, TString treename, float thershold, std::vector<float> &par, std::vector<int> &par2, std::vector<int> &par3, std::vector<float> &par4, std::vector<float> &par5, std::vector<float> &par6, int start = 400)
 {
     TFile* f  = TFile::Open(filesrc);
