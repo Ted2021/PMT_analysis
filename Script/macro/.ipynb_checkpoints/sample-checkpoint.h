@@ -105,9 +105,11 @@ void CreateROOTFile(TString filesrc, TString treename, TString New_ROOT_file, TS
 
     f->Close();
     
+
+
 }
 
-void CreateROOTFile2(std::vector<TString>& RT_files, TString treename, TString New_ROOT_file, TString treename_new, int length, int num)
+void CreateROOTFile2(std::vector<std::string>& RT_files, TString treename, TString New_ROOT_file, TString treename_new, int length, int num)
 {
     gROOT -> Reset();
     gStyle -> SetOptStat(1001110);
@@ -166,7 +168,7 @@ void CreateROOTFile2(std::vector<TString>& RT_files, TString treename, TString N
             tree_n->Fill();
         }
         f->Close();
-        cell += 1024;
+        cell += 1024
     }
     //ROOTファイルの書き込み
     f_n->Write();
