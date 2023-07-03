@@ -53,6 +53,7 @@ void CalcPEPulseHeight(TString filesrc, TString treename, int int_start, int int
 
 }
 
+//とりあえず２番目を使用する
 //生波形とSouceの平均波形の差分を求める関数(ROOTファイルとして書き出す)
 void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString treename_new, std::vector<float> &av_wf, int length = 1024)
 {
@@ -124,6 +125,67 @@ void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString
 
 }
 
+//生波形とSouceの平均波形の差分を求める関数(ROOTファイルとして書き出す)
+void CalcWform2(TString filesrc, TString treename, TString New_ROOT_file, TString treename_new, std::vector<float> &av_wf, int length = 1024)
+{
+    //ROOTの初期設定
+    gROOT -> Reset();
+    gStyle -> SetOptStat(1001110);
+
+    //新しいTFileとTTreeを定義する
+    TFile* f = new TFile(New_ROOT_file, "recreate");
+    TTree* tree = new TTree(treename_new, treename_new);
+
+    //配列を格納するためのバッファ変数
+    float time[length];
+    float wform[length];
+
+    //配列をbranchとしてTTreeに追加
+    tree->Branch("time", time, "time[1024]/F");
+    tree->Branch("wform", wform, "wform[1024]/F");
+
+    //読み込むTFileとTTree
+    TFile* f_s = TFile::Open(filesrc);
+    TTree* tr_s = (TTree*)f_s->Get(treename);
+
+    //配列を格納するためのバッファ変数(Source)
+
+    //####ここを一般化したい####
+    float time_s[length];
+    float wform_s[length];
+    tr_s->SetBranchAddress("time", time_s);
+    tr_s->SetBranchAddress("wform",wform_s);
+    //####ここまで####
+
+    //総イベント数を取得
+    int nEve = tr_s->GetEntries();
+
+
+    //イベントの数だけ繰り返す  
+    for(int i=0;i<nEve;i++)
+    {
+        //i番目のイベントを読み込む
+        tr_s->GetEntry(i);
+
+        //セグメントの数-1だけ繰り返す 差分を取るため、segment1から始める (DRS4では1024固定)
+        for(int l=0;l<length;l++)
+        {   
+
+            //取得時間を新しいROOTファイルのBranchにinput
+            time[l] = time_s[l];
+            //1イベント前との差動電圧の差(微分電圧)を新しいROOTファイルのBrachにinput
+            wform[l] = (wform_s[l] - av_wf[l]);
+        }
+        tree->Fill();
+    }
+    //ROOTファイルの書き込み
+    f->Write();
+
+    f_s->Close();
+
+}
+
+//とりあえず4番目を使用する
 //生波形の波高値からAP_eventをカウントする関数
 void CountAPeventFromPH(TString filesrc, TString treename, int seg, float PH_THRES, int int_start, int int_end, std::vector<int> &par, std::vector<int> &par2, std::vector<float> &par3, std::vector<int> & par4)
 {
@@ -354,7 +416,7 @@ void CountAPeventFromPH4(TString filesrc, TString treename, int seg, float PH_TH
         int AP_event = i;   //APイベントのイベント番号
         int AP_segment = int_start; //APイベントのピーク位置(セグメント番号)
         float AP_PH_max = 0;    //APイベントスタート位置における微分波形の波高値
-        float wform;
+        //float wform;
         int Counts = 0;
 
         tr->GetEntry(i);

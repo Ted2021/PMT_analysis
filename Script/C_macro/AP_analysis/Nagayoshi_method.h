@@ -184,6 +184,61 @@ void CalcDiffWform3(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     f_s->Close();
 }
 
+void CalcDiffWform4(TString filesrc, TString treename, TString Diffwf_ROOT_file, TString treename_dif, std::vector<float> &av_wf, int length = 1024, TString name = "time[1023]/F",  TString name2 = "diffwf[1023]/F")
+{
+    //ROOTの初期設定
+    gROOT -> Reset();
+    gStyle -> SetOptStat(1001110);
+
+    //新しいTFileとTTreeを定義する
+    TFile* f = new TFile(Diffwf_ROOT_file, "recreate");
+    TTree* tree = new TTree(treename_dif, treename_dif);
+
+    //配列を格納するためのバッファ変数
+    float time[length-1];
+    float diffwf[length-1];
+
+    //配列をbranchとしてTTreeに追加
+    tree->Branch("time", time, name);
+    tree->Branch("diffwf", diffwf, name2);
+
+    //読み込むTFileとTTree
+    TFile* f_s = TFile::Open(filesrc);
+    TTree* tr_s = (TTree*)f_s->Get(treename);
+
+    //配列を格納するためのバッファ変数(Source)
+    float time_s[length];
+    float wform_s[length];
+    tr_s->SetBranchAddress("time", time_s);
+    tr_s->SetBranchAddress("wform",wform_s);
+
+    //総イベント数を取得
+    int nEve = tr_s->GetEntries(); 
+
+    //イベントの数だけ繰り返す  
+    for(int i=0;i<nEve;i++)
+    {
+        //i番目のイベントを読み込む
+        tr_s->GetEntry(i);
+
+        //セグメントの数-1だけ繰り返す 差分を取るため、segment1から始める (DRS4では1024固定)
+        for(int l=1;l<length;l++)
+        {   
+
+            //取得時間を新しいROOTファイルのBranchにinput
+            time[l] = time_s[l];
+            //1イベント前との差動電圧の差(微分電圧)を新しいROOTファイルのBrachにinput
+            //###ここも修正必要あり
+            diffwf[l] = (wform_s[l] - av_wf[l]) - (wform_s[l-1] - av_wf[l-1]);
+        }
+        tree->Fill();
+    }
+    //ROOTファイルの書き込み
+    f->Write();
+
+    f_s->Close();
+}
+
 
 void CalcDiffWform2(TString filesrc, TString treename, TString Diffwf_ROOT_file, std::vector<float> &av_wf, int length = 1024, TString name = "time[1023]/F",  TString name2 = "diffwf[1023]/F")
 {
