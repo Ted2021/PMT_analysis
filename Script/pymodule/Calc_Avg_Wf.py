@@ -3,9 +3,10 @@ import numpy as np
 import pickle
 import sys
 
-RT.gROOT.LoadMacro("/Users/kiyomoto/reaserch/8dy_Noise/scripts/macros/average_wave.h")
-
 def Calc_Avg_Wf(file, name_s, name_d):
+    #マクロの読み込み
+    RT.gROOT.LoadMacro("/Users/kiyomoto/reaserch/8dy_Noise/scripts/macros/average_wave.h")
+
     #darkの平均波形を求める
     av_wave_d = RT.std.vector(float)()
     av_time_d = RT.std.vector(float)()
@@ -21,6 +22,7 @@ def Calc_Avg_Wf(file, name_s, name_d):
 
     with open(name_d, "wb") as f:
         pickle.dump(np.array(av_wave_d), f)
+    print("##### Create Avg files! #####")
 
 
 if __name__ == '__main__':
