@@ -210,7 +210,8 @@ void CalcDiffWform4(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     float time_s[length];
     float wform_s[length];
     tr_s->SetBranchAddress("time", time_s);
-    tr_s->SetBranchAddress("wform",wform_s);
+    //tr_s->SetBranchAddress("wform",wform_s);
+    tr_s->SetBranchAddress("wave",wform_s);
 
     //総イベント数を取得
     int nEve = tr_s->GetEntries(); 
@@ -325,17 +326,17 @@ int_end: 計算範囲end
 #########
 
 */
-TH1F* DiffWformProjection(TString filesrc, TString treename, std::vector<float> &par, std::vector<float> &par_err, int int_start, int int_end)
+TH1F* DiffWformProjection(TString filesrc, TString treename, std::vector<float> &par, std::vector<float> &par_err, int int_start, int int_end, int seg = 1024, float h_max = 20, float fig_max = 80)
 {
     //微分波形を射影するヒストグラムを作成
-    TH1F* hst = new TH1F("fumufumu", "hogehoge", 200, -80, 80);
+    TH1F* hst = new TH1F("fumufumu", "hogehoge", 200, -fig_max, fig_max);
 
     //微分波形が入ったROOTファイルを開く
     TFile* f = TFile::Open(filesrc);
     TTree* tr = (TTree*)f->Get(treename);
 
     //配列を格納するBranchのバッファ変数
-    float difwf[1024] = {0};
+    float difwf[seg];
     tr->SetBranchAddress("diffwf", difwf);
     
     //総イベント数
@@ -361,10 +362,10 @@ TH1F* DiffWformProjection(TString filesrc, TString treename, std::vector<float> 
     par_err={};
 
     //SingleGaussianでPedestalのFittingを行う
-    TF1* f_ped = new TF1("gaus", "gaus", -20, 20);
+    TF1* f_ped = new TF1("gaus", "gaus", -h_max, h_max);
 
     //Fittingを実行する
-    hst->Fit(f_ped, "I", "", -20, 20);
+    hst->Fit(f_ped, "I", "", -h_max, h_max);
 
     //パラメータを返す
     for(int i=0;i<3;i++)
