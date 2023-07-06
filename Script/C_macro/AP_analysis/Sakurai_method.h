@@ -126,7 +126,7 @@ void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString
 }
 
 //生波形とSouceの平均波形の差分を求める関数(ROOTファイルとして書き出す)
-void CalcWform2(TString filesrc, TString treename, TString New_ROOT_file, TString treename_new, std::vector<float> &av_wf, int length = 1024, TString name = "time[1024]/F",  TString name2 = "wform[1024]/F")
+void CalcWform2(TString filesrc, TString treename, TString New_ROOT_file, TString treename_new, std::vector<float> &av_wf, int length = 1024, TString branch_time = "time", TString branch_wf = "wform", TString name = "time[1024]/F",  TString name2 = "wform[1024]/F")
 {
     //ROOTの初期設定
     gROOT -> Reset();
@@ -141,8 +141,8 @@ void CalcWform2(TString filesrc, TString treename, TString New_ROOT_file, TStrin
     float wform[length];
 
     //配列をbranchとしてTTreeに追加
-    tree->Branch("time", time, name);
-    tree->Branch("wform", wform, name2);
+    tree->Branch(branch_time, time, name);
+    tree->Branch(branch_wf, wform, name2);
     //tree->Branch("wave", wform, name2);
 
     //読み込むTFileとTTree

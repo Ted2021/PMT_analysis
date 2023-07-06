@@ -184,7 +184,7 @@ void CalcDiffWform3(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     f_s->Close();
 }
 
-void CalcDiffWform4(TString filesrc, TString treename, TString Diffwf_ROOT_file, TString treename_dif, std::vector<float> &av_wf, int length = 1024, TString name = "time[1023]/F",  TString name2 = "diffwf[1023]/F")
+void CalcDiffWform4(TString filesrc, TString treename, TString Diffwf_ROOT_file, TString treename_dif, std::vector<float> &av_wf, int length = 1024, TString branch_time = "time", TString branch_wf = "wform", TString name = "time[1023]/F",  TString name2 = "diffwf[1023]/F")
 {
     //ROOTの初期設定
     gROOT -> Reset();
@@ -209,9 +209,9 @@ void CalcDiffWform4(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     //配列を格納するためのバッファ変数(Source)
     float time_s[length];
     float wform_s[length];
-    tr_s->SetBranchAddress("time", time_s);
-    //tr_s->SetBranchAddress("wform",wform_s);
-    tr_s->SetBranchAddress("wave",wform_s);
+    tr_s->SetBranchAddress(branch_time, time_s);
+    tr_s->SetBranchAddress(branch_wf,wform_s);
+    //tr_s->SetBranchAddress("wave",wform_s);
 
     //総イベント数を取得
     int nEve = tr_s->GetEntries(); 

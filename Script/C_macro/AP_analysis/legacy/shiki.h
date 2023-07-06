@@ -64,3 +64,56 @@ void Shki(std::vector<int> &e, std::vector<int> &s, std::vector<float> &w, std::
     }
 
 }
+
+void Shki2(std::vector<int> &e, std::vector<int> &s, std::vector<float> &w, std::vector<float> &sa, std::vector<int> &par, std::vector<int> &par2, std::vector<float> &par3, std::vector<float> &par4, std::vector<int> &par5, int thre_num)
+{
+    std::size_t list_size = e.size();
+    //int for_num = list_size - 1;
+    //std::cout << "list size: " << for_num << std::endl;
+    bool Flag = false;
+    int Count = 0;
+
+   int event;
+   int seg;
+   float wave;
+   float sabun;
+
+    for(int i=0 ; i<list_size - 1; i++)
+    {
+        if(e.at(i+1) == e.at(i) && s.at(i+1) - s.at(i) ==  1)
+        {
+            if(Count == 0)
+            {
+                event = e.at(i);
+                seg = s.at(i);
+                wave = w.at(i);
+                sabun = sa.at(i);
+            }
+            //Flag = true;
+            Count += 1;
+
+        } else
+        {
+            //Flag = false;
+            if(Count > 0)
+            {
+                par.push_back(event);
+                par2.push_back(seg);
+                par3.push_back(wave);
+                par4.push_back(sabun);
+                par5.push_back(Count+1);
+
+                Count = 0;
+            }
+            else
+            {
+                par.push_back(e.at(i));
+                par2.push_back(s.at(i));
+                par3.push_back(w.at(i));
+                par4.push_back(sa.at(i));
+                par5.push_back(1);
+            }
+        }
+    }
+
+}
