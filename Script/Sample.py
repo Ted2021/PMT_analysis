@@ -4,6 +4,13 @@ import pymodule.Charge_analysis.Charge_Dist as Chrg
 import pymodule.Fitting.Fitting as Fit
 import sys
 import pandas as pd
+import os
+import subprocess
+import ROOT as RT
+import numpy as np
+import pickle
+import matplotlib.pyplot as plt
+
 
 
 
@@ -28,6 +35,9 @@ if __name__ == '__main__':
     histX_pkl = "histX_pkl"
     histY_pkl = "histY_pkl"
     para_pkl = "para.pkl"
+    
+    #get the pass
+    cwd = os.getcwd()
 
 
     create = DRS4.Create_ROOT_file_2386(file, file, work_dir, work_dir+new_file, 10, tr, tr_d)

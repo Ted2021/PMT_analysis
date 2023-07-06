@@ -23,7 +23,7 @@ def Find_Fit_Para(hst, name_h1, name_h2):
     return mean, height, sigma, np.array(hist_value["X"]), np.array(hist_value["Y"])
 
 def Fit_trpl_Gauss(hst, mean, height, sigma, fit_range, name_f):
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
     fit_para = RT.std.vector(float)()
     fit_para_e = RT.std.vector(float)()
     RT.Fit_trpl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1])
@@ -36,7 +36,7 @@ def Fit_trpl_Gauss(hst, mean, height, sigma, fit_range, name_f):
     return list(fit_para), list(fit_para_e)
 
 def Fit_sgl_Gauss(hst, mean, height, sigma, fit_range):
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
     fit_para = RT.std.vector(float)()
     fit_para_e = RT.std.vector(float)()
     RT.Fit_trpl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1])

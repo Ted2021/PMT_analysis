@@ -1,9 +1,10 @@
 import ROOT as RT
 import sys
 import subprocess
+import os
 
 def Create_ROOT_file_2385(original_file, dark_file, path, new_file, CH=10, Treename_s = "Treesingle_0", Treename_d = "Treedark_0"):
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/IO/Convert_DRS4.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/IO/Convert_DRS4.h")
     if CH == 10:
         branch_p = "wform1"
         branch_n = "wform0"
@@ -20,7 +21,7 @@ def Create_ROOT_file_2385(original_file, dark_file, path, new_file, CH=10, Treen
     print("##### Convert ROOT file! #####")
 
 def Create_ROOT_file_2386(original_file, dark_file, path, new_file, CH=10, Treename_s = "Treesingle_0", Treename_d = "Treedark_0"):
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/IO/Convert_DRS4.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/IO/Convert_DRS4.h")
     if CH == 10:
         branch_p = "wform1"
         branch_n = "wform0"

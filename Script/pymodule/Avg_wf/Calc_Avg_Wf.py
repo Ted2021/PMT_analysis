@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def Calc_Avg_Wf(file, dfile, name_s, name_d,
                 tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
     #マクロの読み込み
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
 
     #darkの平均波形を求める
     av_wave_d = RT.std.vector(float)()
@@ -32,7 +32,7 @@ def Calc_Avg_Wf(file, dfile, name_s, name_d,
 def Calc_Avg_Wf_source(file, name_s,
                 tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
     #マクロの読み込み
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
 
     #sourceの平均波形を求める
     av_wave = RT.std.vector(float)()
@@ -49,7 +49,7 @@ def Calc_Avg_Wf_source(file, name_s,
 def Calc_Avg_Wf_dark(dfile, name_d,
                 tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
     #マクロの読み込み
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
 
     #darkの平均波形を求める
     av_wave_d = RT.std.vector(float)()
