@@ -37,5 +37,8 @@ if __name__ == '__main__':
     avg_wf = AVG.Calc_Avg_Wf_all(work_dir+new_file, work_dir+new_file, work_dir+avg_s_pkl, work_dir+avg_d_pkl)
     int_max  = AVG.Plot_Avg(avg_wf[1], avg_wf[2], work_dir+avg_fig)
 
-    #charge = Chrg.Calc_Charge(work_dir+new_file, work_dir+new_file, int_max - 20, int_max + 50, work_dir+chrg_pkl)
-    #hist = Chrg.Plot_Hist(charge, -20, 120)
+    charge = Chrg.Calc_Charge(work_dir+new_file, work_dir+new_file, int_max - 20, int_max + 50, work_dir+chrg_pkl)
+    min_c = np.min(np.array(chrg))
+    max_c = np.max(np.array(chrg))
+    hist = Chrg.Plot_Hist(charge, min_c-10, max_c+10)
+    
