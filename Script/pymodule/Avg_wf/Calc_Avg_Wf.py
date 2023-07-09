@@ -4,7 +4,7 @@ import pickle
 import sys
 import matplotlib.pyplot as plt
 
-def Calc_Avg_Wf(file, dfile, name_s, name_d,
+def Calc_Avg_Wf_all(file, dfile, name_s, name_d,
                 tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
     #マクロの読み込み
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")

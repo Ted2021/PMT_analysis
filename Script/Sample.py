@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     create = DRS4.Create_ROOT_file_2386(file, file, work_dir, work_dir+new_file, 10, tr, tr_d)
     del create
-    avg_wf = AVG.Calc_Avg_Wf(work_dir+new_file, work_dir+new_file, work_dir+avg_s_pkl, work_dir+avg_d_pkl)
+    avg_wf = AVG.Calc_Avg_Wf_all(work_dir+new_file, work_dir+new_file, work_dir+avg_s_pkl, work_dir+avg_d_pkl)
     int_max  = AVG.Plot_Avg(avg_wf[1], avg_wf[2], work_dir+avg_fig)
     #print(str(int_max))
     #int_max = 370
