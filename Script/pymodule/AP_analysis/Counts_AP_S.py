@@ -4,14 +4,15 @@ import pickle
 import sys
 import pandas as pd
 
-def Generate_WFORM_File(file, file_wf, avg_pkl, tree_wf="Treesource_0"):
+def Generate_WFORM_File(file, file_wf, avg_pkl, tree_s = "Treesource_0", tree_wf="Treesource_0"):
     #マクロの読み込み
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
     av_wave = RT.std.vector(float)(np.array(pd.read_pickle(avg_pkl)))
-    RT.CalcWform2(file, "Treesingle_0", file_wf, tree_wf, av_wave)
+    RT.CalcWform2(file, tree_s, file_wf, tree_wf, av_wave)
+    print("##### Generate wform ROOT file!! #####")
 
 def Counts_AP_S(file_wf, S_pd, PEAK_THES, CONTI_THES, INT_s, INT_e, avg_pkl, tree_wf="Treesource_0"):
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
     av_wave = RT.std.vector(float)(np.array(pd.read_pickle(avg_pkl)))
     event = RT.std.vector(int)()
     seg = RT.std.vector(int)()

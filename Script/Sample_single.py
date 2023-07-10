@@ -32,12 +32,12 @@ if __name__ == '__main__':
     avg_fig = "Avg.png"
     chrg_pkl = "chrg.pkl"
     chrg_fig = "Chrg.png"
-    histX_pkl = "histX_pkl"
-    histY_pkl = "histY_pkl"
+    histX_pkl = "histX_.pkl"
+    histY_pkl = "histY_.pkl"
     para_pkl = "para.pkl"
     
     #get the pass
-    cwd = os.getcwd()
+    #cwd = os.getcwd()
 
 
     create = DRS4.Create_ROOT_file_2386(file, file, work_dir, work_dir+new_file, 10, tr, tr_d)
@@ -57,6 +57,6 @@ if __name__ == '__main__':
     Y = pd.read_pickle(work_dir+histY_pkl)
     parameter = pd.read_pickle(work_dir+para_pkl)
     #Fit.Fig_Plot(p[3],p[4], para[0], work_dir+chrg_fig)
-    Fit.Fig_Plot(X,Y, parameter, work_dir+chrg_fig)
+    #Fit.Fig_Plot(X,Y, parameter, work_dir+chrg_fig)
     
     print("Done!!")

@@ -155,8 +155,8 @@ void CalcWform2(TString filesrc, TString treename, TString New_ROOT_file, TStrin
     float time_s[length];
     float wform_s[length];
     tr_s->SetBranchAddress("time", time_s);
-    //tr_s->SetBranchAddress("wform",wform_s);
-    tr_s->SetBranchAddress("wave",wform_s);
+    tr_s->SetBranchAddress("wform",wform_s);
+    //tr_s->SetBranchAddress("wave",wform_s);
     //####ここまで####
 
     //総イベント数を取得

@@ -5,7 +5,7 @@ import sys
 import pandas as pd
 
 def Counts_AP_K(file_diff, file_wf, DIFF_THRES, PEAK_THRES, N_pd, K_pd, tree_dif = "Treediff_0", tree_wf = "Treesource_0"):
-    RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Kiyomoto_method.h")
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Kiyomoto_method.h")
     #清本法で、永吉法で得られたAP_Eventを検討する
     df = pd.read_pickle(N_pd)
     e = np.array(df["event"])

@@ -35,11 +35,17 @@ def Fit_trpl_Gauss(hst, mean, height, sigma, fit_range, name_f):
     print("##### Complete Fitting #####")
     return list(fit_para), list(fit_para_e)
 
-def Fit_sgl_Gauss(hst, mean, height, sigma, fit_range):
+def Fit_sgl_Gauss(hst, mean, height, sigma, fit_range, name_f):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
     fit_para = RT.std.vector(float)()
     fit_para_e = RT.std.vector(float)()
-    RT.Fit_trpl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1])
+    RT.Fit_sgl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1])
+
+    with open(name_f, "wb") as f:
+        pickle.dump(np.array(fit_para), f)
+        pickle.dump(np.array(fit_para_e), f)
+
+    print("##### Complete Fitting #####")
 
     return list(fit_para), list(fit_para_e)
 
@@ -74,3 +80,19 @@ def Fig_Plot(X, Y, para, fig_name, bins = 330):
     plt.savefig(fig_name)
     #plt.show()
     print("##### Create charge dist! #####")
+
+def Fig_Plot_multi(X, Y, para, fig_name, bins = 330):
+    fig, ax = plt.subplots()
+    ax.plot(X,Y,c="blue", label="Charge Dist.")
+    y_best = gau(X, para[0], para[1], para[2])
+    plt.plot(X,y_best,c="red",label="Best Fit")
+    ax.set_yscale("log")
+    ax.grid(which="both")
+    ax.set_ylim(0.6, np.max(y_best)+100)
+    plt.xlabel("Charge (mV*ns)")
+    plt.ylabel("#Events")
+    plt.legend()
+    plt.savefig(fig_name)
+    #plt.show()
+    print("##### Create charge dist! #####")
+
