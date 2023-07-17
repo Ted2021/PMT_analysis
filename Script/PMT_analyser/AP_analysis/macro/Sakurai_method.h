@@ -53,6 +53,45 @@ void CalcPEPulseHeight(TString filesrc, TString treename, int int_start, int int
 
 }
 
+//0.3p.e.イベントの波高値を求める関数
+void CalcPEPulseHeight2(TString filesrc, TString treename, int int_start, int int_end, std::vector<float> &av_wf, std::vector<float> &par)
+{
+    //ファイルを開く
+    TFile* f  = TFile::Open(filesrc);
+    //開いたファイルからTree名を取得
+    TTree* tr = (TTree*)f->Get(treename);
+    //配列を用意
+    float time[1024];
+    float wform[1024];
+
+    //用意した配列とtree内イベントの対応付け
+    tr->SetBranchAddress("time",time);
+    tr->SetBranchAddress("wform",wform);
+    
+    int int_wnd[2] = {int_start,int_end};//64-74 ns
+    int nEve = tr->GetEntries(); //tr内の全イベント数を格納
+    float wform_temp;
+    float peak_wf;
+
+    for(int i=0;i<nEve;i++)//イベント回数で回す
+    {
+        tr->GetEntry(i);
+        peak_wf = 0;
+
+        for(int l=int_wnd[0];l<int_wnd[1];l++)
+        {
+            wform_temp = wform[l] - av_wf[l];
+            if (wform_temp > peak_wf)
+            {
+                peak_wf = wform_temp;
+            }
+        }
+        par.push_back(peak_wf);
+    }
+    f->Close();
+
+}
+
 //とりあえず２番目を使用する
 //生波形とSouceの平均波形の差分を求める関数(ROOTファイルとして書き出す)
 void CalcWform(TString filesrc, TString treename, TString New_ROOT_file, TString treename_new, std::vector<float> &av_wf, int length = 1024)
