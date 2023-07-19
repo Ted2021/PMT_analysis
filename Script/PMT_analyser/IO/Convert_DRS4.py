@@ -4,7 +4,7 @@ import subprocess
 import os
 
 
-def Check_Tree(file_o)
+def Check_Tree(file_o):
     file = RT.TFile(file_o, "READ")
     tree_names = [key.GetName() for key in file.GetListOfKeys() if key.GetClassName() == "TTree"]
     bool_s = "Treesingle_0" in tree_names

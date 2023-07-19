@@ -4,6 +4,7 @@ import pickle
 import sys
 import pandas as pd
 import os
+import glob
 
 def Combine_DF(path, DF_name, Chrg_pkl, DF_com_name):
     DF1 = pd.read_pickle(path+"/AP0000/"+DF_name)
@@ -211,4 +212,23 @@ def Combine_DF_K_QD(path, DF_name, QD_DF, Chrg_pkl, QD_ch, Chrg_pkl2, QD_ch2, DF
     #DF = pd.concat([DF1,DF2,DF3,DF4,DF5,QDF1,"""QDF2,QDF3,QDF4,QDF5"""],ignore_index=True)
     DF = pd.concat([DF1,DF2,DF3,DF4,DF5,Empty],ignore_index=True)
     DF.to_pickle(DF_com_name)
+
+
+def Merge_DF(which, path, file_name):
+    Dataset = sorted(glob.glob("{0}AP*/*{1}_Cat.pkl".format(path, which)))
+    Timing = [0, 950, 1850, 2750, 3650]
+    if len(Dataset) == 0:
+        print("NO Data")
+    else:
+        Case = pd.DataFrame()
+        for i in range(len(Dataset)):
+            print(Dataset[i])
+            Df_temp = pd.read_pickle(Dataset[i])
+            Df_temp["time"] = np.array(Df_temp["seg"])*1000/1024+Timing[i]
+            display(Df_temp)
+            Case = pd.concat([Case, Df_temp], ignore_index = True)
+        #file_name = Dataset[i].split("/")[-1].split("AP3650")[0] + "{0}_All_Cat.pkl".format(which)
+        if os.path.exists("{0}ap_result/".format(path)) == False:
+            os.mkdir("{0}ap_result/".format(path))
+        Case.to_pickle("{0}ap_result/".format(path)+file_name)
 

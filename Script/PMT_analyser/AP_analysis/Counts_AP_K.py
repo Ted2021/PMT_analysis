@@ -171,7 +171,7 @@ def Compare_SvsK(S_df, K_df):
     del list_k, list_s
 
 
-def Compare_SvsK3(S_df, K_fd):
+def Compare_SvsK3(S_df, K_df):
     S = pd.read_pickle(S_df)
     K = pd.read_pickle(K_df)
     Diff = pd.merge(K,S, on=['event', 'seg', 'charge'], how='outer',indicator=True)
@@ -192,3 +192,5 @@ def Compare_SvsK3(S_df, K_fd):
     
     S_label.to_pickle(S_df)
     K_label.to_pickle(K_df)
+
+    print("#### Compare S & K method ####")
