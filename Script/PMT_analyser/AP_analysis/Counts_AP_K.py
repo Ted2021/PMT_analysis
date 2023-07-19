@@ -169,3 +169,26 @@ def Compare_SvsK(S_df, K_df):
     print("##### K=> Compare with S_method!! #####")
     del label_k
     del list_k, list_s
+
+
+def Compare_SvsK3(S_df, K_fd):
+    S = pd.read_pickle(S_df)
+    K = pd.read_pickle(K_df)
+    Diff = pd.merge(K,S, on=['event', 'seg', 'charge'], how='outer',indicator=True)
+    
+    S_only = Diff[Diff["_merge"] == "right_only"][S.columns.values]
+    S_only["K_label"] = np.full(len(S_only), False)
+    S_both = Diff[Diff["_merge"] == "both"][S.columns.values]
+    S_both["K_label"] = np.full(len(S_both), True)
+    
+    K_only = Diff[Diff["_merge"] == "left_only"][K.columns.values]
+    K_only["S_label"] = np.full(len(K_only), False)
+    K_both = Diff[Diff["_merge"] == "both"][K.columns.values]
+    K_both["S_label"] = np.full(len(K_both), True)
+    
+    
+    S_label = pd.concat([S_both, S_only])
+    K_label = pd.concat([K_both, K_only])
+    
+    S_label.to_pickle(S_df)
+    K_label.to_pickle(K_df)
