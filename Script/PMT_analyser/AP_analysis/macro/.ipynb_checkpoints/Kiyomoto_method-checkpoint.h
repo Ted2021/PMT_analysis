@@ -749,7 +749,7 @@ void JudgeAPevent4(TString filesrc_s, TString treename_s, TString filesrc_d, TSt
         if(ph_peak > PH_THRES)  //櫻井法の閾値に基づきノイズでないかどうか判別する
         {
             //前イベントと被っていないか確認
-            if(event[i] == event[i-1])
+            if(i != 0 && event[i] == event[i-1])
             {
                 //前イベントと同じ、イベント番号かつ、segが前イベントのrangeに入ってたら3、それ以外は全て1(暫定)
                 if(seg[i] >= par2[par2.size() - 1] && seg[i] <  par5[par5.size() - 1])
@@ -807,6 +807,168 @@ void JudgeAPevent4(TString filesrc_s, TString treename_s, TString filesrc_d, TSt
             par7.push_back(ph_peak);
             par8.push_back(wf_ankle);
     }
+
+    f_s->Close();
+    f_d->Close();
+
+}
+
+
+//ver 4(多分これが最新版)
+void JudgeAPevent5(TString filesrc_s, TString treename_s, TString filesrc_d, TString treename_d, 
+    int slice, float DIF_THRES, float PH_THRES, float PH_CONV, float DIFF_CONV, 
+    std::vector<int> &event, std::vector<int> &seg,
+    std::vector<int> &par, std::vector<int> &par2, std::vector<int> &par3, std::vector<int> &par4,
+    std::vector<int> &par5, std::vector<float> &par6, std::vector<float> &par7,std::vector<float> &par8,
+    std::vector<int> &par9,
+    int limit_d = 5, int limit_u = 10)
+{
+    //ROOTファイルの読み込み
+    TFile* f_s = TFile::Open(filesrc_s);
+    TTree* tr_s = (TTree*)f_s->Get(treename_s);
+    TFile* f_d = TFile::Open(filesrc_d);
+    TTree* tr_d = (TTree*)f_d->Get(treename_d);
+
+    //配列を用意
+    float time_s[slice];
+    float diff_wf[slice];
+    float time_d[slice];
+    float wform[slice];
+    tr_s->SetBranchAddress("time",time_s);
+    tr_s->SetBranchAddress("diffwf",diff_wf);
+    tr_d->SetBranchAddress("time",time_d);
+    tr_d->SetBranchAddress("wform",wform);
+
+    //永吉法で見つかったAP_eventの長さ
+    std::size_t size = event.size();
+
+
+    //イベントラベル(0:ノイズ, 1:APevent, 2:QuickDoubleの可能性あり, 3:重複)
+    int Event_label = 1;
+    //QDラベル(1:QuickDouble有り, 0:QuickDoubleなし)
+    int QD_label =  0;
+
+    int start_AP_event_seg;
+    int diff_peak_seg;
+    int ph_peak_seg;
+    int diff_ankle_seg;
+    int end_AP_event_seg;
+
+    float diff_peak;
+    float ph_peak;
+    float wf_ankle;
+    bool QD_c;
+
+
+    for(int i=0;i<size;i++)
+    {
+        //永吉法で見つかったAPのイベントを読み込む
+        tr_s->GetEntry(event[i]);
+        tr_d->GetEntry(event[i]);
+        
+        
+        //APの開始位置を求める
+        start_AP_event_seg = CheckConv(wform, diff_wf, seg[i], limit_d, DIF_THRES, PH_CONV, DIFF_CONV, 0);
+
+
+        /*
+        //QuickDoubleイベントかどうか判別
+        if(i != 0)
+        {
+            //一つ前に処理したイベントから連続しているかどうか
+            if(event[i] ==  event[i-1] && seg[i] == par5[par5.size() - 1])
+            {
+                QD_label = 1;  //QuickDoubleの続き
+                start_AP_event_seg = par5[par5.size() - 1];
+            }
+            else
+            {
+                QD_label = 0;  //独立したイベント
+            }
+        }
+        */
+        
+        diff_peak_seg = FindPeakValue(diff_wf, seg[i]); //微分波形のピーク位置を探す
+        
+        diff_peak = diff_wf[diff_peak_seg];   //微分波形のピーク値を求める
+        
+        ph_peak_seg = FindPeakValue(wform, diff_peak_seg);  //生波形のピーク位置を探す
+        ph_peak = wform[ph_peak_seg]; //生波形のピーク値を求める
+        if(ph_peak > PH_THRES)  //櫻井法の閾値に基づきノイズでないかどうか判別する
+        {
+            int a = 1;
+            //std::cout << "over"  << std::endl;
+            
+            //前イベントと被っていないか確認
+            if(event[i] == event[i-1])
+            {
+                //前イベントと同じ、イベント番号かつ、segが前イベントのrangeに入ってたら3、それ以外は全て1(暫定)
+                if(seg[i] >= par2[par2.size() - 1] && seg[i] <  par5[par5.size() - 1])
+                {
+                    Event_label = 3;
+                }
+                else
+                {
+                    Event_label = 1;
+                }
+            }
+            else
+            {
+                Event_label = 1;
+            }
+            /*
+            //閾値より大きかった場合、生波形の折れ曲がりについて調べる
+            diff_ankle_seg = FindPeakValue(diff_wf, ph_peak_seg, 0);   //生波形のankle位置を探す(微分波形の極小点)
+            wf_ankle = wform[diff_ankle_seg]; //生波形のankle値を求める
+            
+            std::tie(end_AP_event_seg, QD_c) = CheckConv3(wform, diff_wf, diff_ankle_seg, limit_u, DIF_THRES, PH_CONV, DIFF_CONV, 1, false); //APのイベントの収束位置を探す
+            if(Event_label != 3)
+            {
+                if(QD_c == false)   //QuickDoubleが発生していないか確認
+                {
+                    //QuickDoubleなし、通常のAPイベント
+                    Event_label = 1;
+                }
+                else
+                {
+                    //QuickDoubleあり
+                    Event_label = 2;
+                }
+            }
+            */
+        }
+        else
+        {
+            int b = 1;
+            //std::cout << "not over"  << std::endl;
+            
+            //櫻井法の波高値より低い場合は、ノイズとみなす
+            Event_label = 0;
+            /*
+            diff_ankle_seg = FindPeakValue(diff_wf, ph_peak_seg, 0);   //生波形のankle位置を探す(微分波形の極小点)
+            wf_ankle = wform[diff_ankle_seg]; //生波形のankle値を求める
+
+            end_AP_event_seg = CheckConv2(wform, diff_wf, diff_ankle_seg, limit_u, DIF_THRES, PH_CONV, DIFF_CONV, 1, QD_c);
+            */
+        }
+
+        
+        //これまでの結果を返す
+        par.push_back(Event_label);
+        /*
+        par9.push_back(QD_label);
+        */
+        par2.push_back(start_AP_event_seg);
+        /*
+        par3.push_back(ph_peak_seg);
+        par4.push_back(diff_ankle_seg);
+        par5.push_back(end_AP_event_seg);
+        par6.push_back(diff_peak);
+        par7.push_back(ph_peak);
+        par8.push_back(wf_ankle);
+        */
+    }
+    
 
     f_s->Close();
     f_d->Close();

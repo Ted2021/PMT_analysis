@@ -77,7 +77,7 @@ if __name__ == '__main__':
         #print(Timing)
         """
     """
-    file = "/Users/kiyomoto/reaserch/PMT_data/pmt/230627/AC1952/20230627_AC1952_AP0000.root"
+    file = "/Users/kiyomoto/reaserch/PMT_data/pmt/230627/AC1949/20230627_AC1949_AP0000.root"
     hh = Check_Tr(file)
     if hh != "ERROR!":
         AP_counts(new_dir_path, file, hh)

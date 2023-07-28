@@ -227,8 +227,24 @@ def Merge_DF(which, path, file_name):
             Df_temp["time"] = np.array(Df_temp["seg"])*1000/1024+Timing[i]
             display(Df_temp)
             Case = pd.concat([Case, Df_temp], ignore_index = True)
-        #file_name = Dataset[i].split("/")[-1].split("AP3650")[0] + "{0}_All_Cat.pkl".format(which)
         if os.path.exists("{0}ap_result/".format(path)) == False:
             os.mkdir("{0}ap_result/".format(path))
         Case.to_pickle("{0}ap_result/".format(path)+file_name)
+
+def Merge_DF2(df_list, path, file_name):
+    Timing = [0, 950, 1850, 2750, 3650]
+    if len(df_list) == 0:
+        print("No DATA!!")
+    else:
+        Case = pd.DataFrame()
+        for i in range(len(df_list)):
+            print(df_list[i])
+            #Df_temp = pd.read_pickle(df_list[i])
+            Df_temp["time"] = np.array(Df_temp["seg"])*1000/1024+Timing[i]
+            display(Df_temp)
+            Case = pd.concat([Case, Df_temp], ignore_index = True)
+        if os.path.exists("{0}ap_result/".format(path)) == False:
+            os.mkdir("{0}ap_result/".format(path))
+        Case.to_pickle("{0}ap_result/".format(path)+file_name)
+
 
