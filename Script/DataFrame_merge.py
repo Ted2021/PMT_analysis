@@ -14,12 +14,21 @@ import pickle
 import glob
 import matplotlib.pyplot as plt
 import datetime
+import slackweb
+
+slack = slackweb.Slack(url = "https://hooks.slack.com/services/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")
+def notify(title, text, color):
+    attachments = [{"title": title,
+                    "text": text,
+                    "color": color, #good, warning, danger
+                    "footer": "Send from Python",}]
+    slack.notify(text=None, attachments=attachments)
 
 def Merge_file(hoge, label):
     Case = pd.DataFrame()
     for i in range(len(hoge)):
         Df_temp = pd.read_pickle(hoge["Path"][i]+hoge[label][i])
-        Df_temp["time"] = np.array(Df_temp["seg"])*1000/1024+int(hoge["Path"][i].split("/")[-2].split("AP")[-1])
+        Df_temp["time"] = np.array(Df_temp["seg"])*1000/1024+int(hoge[label][i].split("_")[2].split("AP")[-1])
         display(Df_temp)
         Case = pd.concat([Case, Df_temp], ignore_index = True)
     return Case
@@ -36,10 +45,13 @@ if __name__ == '__main__':
     K_all = Merge_file(hoge, "K_Cat")
 
     path = hoge["Path"][0].split("AP0000")[0]
-    if os.path.exists("{0}ap_result/".format(path)) == False:
+    print(path)
+    if os.path.exists("{0}ap_result/".format(path)) == False: 
         os.mkdir("{0}ap_result/".format(path))
     
     N_all.to_pickle("{0}ap_result/".format(path)+"20230723_N_Cat_All.pkl")
     S_all.to_pickle("{0}ap_result/".format(path)+"20230723_S_Cat_All.pkl")
     K_all.to_pickle("{0}ap_result/".format(path)+"20230723_K_Cat_All.pkl")
+    notify(args[1], "Merge is Finish!!", "good")
+
 

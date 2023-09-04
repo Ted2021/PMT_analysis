@@ -14,6 +14,15 @@ import pickle
 import glob
 import matplotlib.pyplot as plt
 import datetime
+import slackweb
+
+slack = slackweb.Slack(url = "https://hooks.slack.com/services/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")
+def notify(title, text, color):
+    attachments = [{"title": title,
+                    "text": text,
+                    "color": color, #good, warning, danger
+                    "footer": "Send from Python",}]
+    slack.notify(text=None, attachments=attachments)
 
 """
 AP_avg_wf_s = "avg_wf_s.pkl"
@@ -31,8 +40,12 @@ K_Cat = "K_Cat.pkl"
 def File_check(dir):
     if os.path.exists(dir) == True:
         print("{0} is {1}".format(dir.split("/")[-1], os.path.exists(dir)))
+        notify(args[1], "{0} is {1}".format(dir.split("/")[-1], os.path.exists(dir)), "good")
     else:
         print('\033[31m' + "{0} is {1}".format(dir.split("/")[-1], os.path.exists(dir)) + "\033[0m")
+        notify(args[1], '\033[31m' + "{0} is {1}".format(dir.split("/")[-1], os.path.exists(dir)) + "\033[0m", "bad")
+
+    
 
 
 
@@ -95,48 +108,46 @@ if __name__ == '__main__':
 
     args = sys.argv
 
-    #path = args[1]
-    #file = args[2]
-
+    #関数内部でも使えるようにファイル名はglobal変数にしておく
     global path
     global file
     global wform_file
     global AP_Diff_root_file
     global AP_Dev_root_file
-
     global AP_avg_wf_s
     global AP_avg_wf_d
-
     global N_Cat
     global S_Cat
     global K_Cat
 
-    hoge = pd.read_csv(args[1])
-    mode = args[2]
+    hoge = pd.read_csv(args[1])     #ファイル名が入ったCSVファイルを読み込む
+    mode = args[2]                  #debugモードで実行するならば、debugを打ち込む
 
+    #APの解析をする範囲を表示
     for i in range(len(hoge)):
         print('\033[34m' + '{0} is t={1}ns ~ t={2}ns'.format(hoge.loc[i]["Timing"], 
                                                             int(hoge.loc[i]["int_s"])*1000/1024 + int(hoge.loc[i]["Timing"].split("AP")[-1]), 
                                                             int(hoge.loc[i]["int_e"])*1000/1024 + int(hoge.loc[i]["Timing"].split("AP")[-1])) + '\033[0m')
     
+    #ファイルが存在するか確認する
     for i in range(len(hoge)):
         print("Analysis Target => {0}".format(hoge.loc[i]["Timing"]))
+
+        #CSVファイルからファイル名を取得
         path = hoge.loc[i]["Path"]
         file = hoge.loc[i]["Original RT_file"]
         wform_file = hoge.loc[i]["Conver RT_file"]
         AP_Diff_root_file = hoge.loc[i]["Diff RT_file"]
         AP_Dev_root_file = hoge.loc[i]["Dev RT_file"]
-
         AP_avg_wf_s = hoge.loc[i]["Avg_s"] 
         AP_avg_wf_d = hoge.loc[i]["Avg_d"] 
-
         N_Cat = hoge.loc[i]["N_Cat"] 
         S_Cat = hoge.loc[i]["S_Cat"]
         K_Cat = hoge.loc[i]["K_Cat"]
-        
         start = int(hoge.loc[i]["int_s"])
         end = int(hoge.loc[i]["int_e"])
 
+        #ファイルが存在するか確認
         File_check(file)
         File_check(path+wform_file)
         File_check(path+AP_Diff_root_file)
@@ -148,12 +159,15 @@ if __name__ == '__main__':
         File_check(path+K_Cat)
         print("\033[32m" + "analysis range seg:{0} => seg:{1}".format(start, end) + "\033[0m")
         
+
         if mode != "debug":
+            #永吉法、櫻井法、清本法のそれぞれ解析を実行する
             N_method_Counts(int_s=start, int_e=end)
             S_method_Counts(conti=3, int_s=start, int_e = end)
             K_method_Counts()
             Compare_to_S_K()
             print('\033[31m' + "Analysis {0} is Finish!!".format(hoge.loc[i]["Timing"]) + "\033[0m")
+            notify(args[1], "Analysis {0} is Finish!!".format(hoge.loc[i]["Timing"]), "good")
 
     #AP_avg_wf_s = Def_file_name(path, "avg_wf_s.pkl")
     #AP_avg_wf_s = 'avg_s.pkl'
