@@ -4,4 +4,4 @@
 
 ### Input & Output
 
-![IO](Script/AP_ROOTFILE_IO.png)
+![IO](PMT_analysis/Script/AP_ROOTFILE_IO.png)
