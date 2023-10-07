@@ -1,3 +1,6 @@
+import uproot
+import numpy as np
+
 def Convert_RT_to_numpy(RT_file, tree_name):
     branch = {}
     file = uproot.open(RT_file)
