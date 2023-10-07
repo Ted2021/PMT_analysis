@@ -22,6 +22,8 @@ elif CH == "multi":
     tree_O.Draw("wform3-wform2:time>>(1024,0,200,1024,-20,500)","","colz", int(events), 0)
 elif CH == "AP":
     tree_O.Draw("wform1-wform0:time>>(1024,0,1000,1024,-50,200)","","colz",int(events), 0)
+elif CH == "AP_reg":
+    tree_O.Draw("wformNeg - wformPos :time>>(1024,0,1000,1024,-50,200)","","colz",int(events), 0)
 else:
     print("ERROR: please set correct args!! 10 or 32")
     sys.exit()

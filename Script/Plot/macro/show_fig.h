@@ -1,28 +1,21 @@
-#include <TFile.h>
-#include <TTree.h>
-#include <TGraph.h>
-#include <TCanvas.h>
+#include "TFile.h"
+#include "TString.h"
+#include "TTree.h"
+#include "TGraph.h"
+#include "TCanvas.h"
+
 
 void CreateGraphFromBranch(TString filesrc, TString treename) {
-    TFile *file = new TFile(filesrc, "READ");
-    if (!file || file->IsZombie()) {
-        cout << "Error: Could not open ROOT file." << endl;
-        return;
-    }
-
-    TTree *tree = (TTree*)file->Get(treename);
-    if (!tree) {
-        cout << "Error: Could not find the specified tree." << endl;
-        return;
-    }
+    TFile* f = TFile::Open(filesrc);
+    TTree* tree = (TTree*)f->Get(treename);
 
     float time[1024] = {0}; // x軸のデータを格納する変数
     float wfp[1024] = {0};
     float wfn[1024] = {0}; // y軸のデータを格納する変数
 
-    tree->SetBranchAddress("time", time, "time[1024]/F"); // x軸のブランチ名を指定して変数にデータを読み取る
-    tree->SetBranchAddress("wform3", wfp, "wform3[1024]/F"); // y軸のブランチ名を指定して変数にデータを読み取る
-    tree->SetBranchAddress("wform2", wfn, "wform2[1024]/F"); // y軸のブランチ名を指定して変数にデータを読み取る
+    tree->SetBranchAddress("time[1024]/F", time); // x軸のブランチ名を指定して変数にデータを読み取る
+    tree->SetBranchAddress("wform3[1024]/F", wfp); // y軸のブランチ名を指定して変数にデータを読み取る
+    tree->SetBranchAddress("wform2[1024]/F", wfn); // y軸のブランチ名を指定して変数にデータを読み取る
 
     Int_t nentries = tree->GetEntries();
 
