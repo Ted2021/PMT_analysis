@@ -53,3 +53,15 @@ def Create_ROOT_file_2386(original_file, dark_file, path, new_file, CH=10, Treen
     subprocess.run(["rm", path+"temporary2.root"])
 
     print("##### Convert ROOT file! #####") 
+
+## 生データから差動電圧を引いたROOTファイルを生成
+def Creat_ROOT_file(original_file, Tree_name, path, new_file, new_tree, branch_p, branch_n):
+    RT.ConvertFile(original_file, Tree_name, new_file, new_tree, branch_p, branch_n, 0)
+    print("##### Create differential voltage ROOT_file! #####")
+
+def Merge_ROOT_file(RT_file1, RT_file2, RT_new, rm_file = False):
+    subprocess.run(["hadd", RT_new, RT_file1, RT_file2])
+    if rm_file == True:
+        subprocess.run(["rm", RT_file1])
+        subprocess.run(["rm", RT_file2])
+    print("##### Merge ROOT_file! #####")
