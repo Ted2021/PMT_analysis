@@ -183,6 +183,14 @@ void ConvertFile(TString filesrc, TString treename, TString new_ROOT_file, TStri
                     }
                     break;
                 
+                case 1400:
+                    if((l+sc)%1024==175)
+                    {
+                        wfp[l] = (wfp[l-1] + wfp[l+1])*0.5; 
+                        wfn[l] = (wfn[l-1] + wfn[l+1])*0.5;
+                    }
+                    break;
+                
                 default:
                     break;
             }
