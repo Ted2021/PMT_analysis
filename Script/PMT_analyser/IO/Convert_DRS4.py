@@ -55,7 +55,7 @@ def Create_ROOT_file_2386(original_file, dark_file, path, new_file, CH=10, Treen
     print("##### Convert ROOT file! #####") 
 
 ## 生データから差動電圧を引いたROOTファイルを生成
-def Creat_ROOT_file(original_file, Tree_name, path, new_file, new_tree, branch_p, branch_n, DRS_board = 0):
+def Creat_ROOT_file(original_file, Tree_name, new_file, new_tree, branch_p, branch_n, DRS_board = 0):
     RT.ConvertFile(original_file, Tree_name, new_file, new_tree, branch_p, branch_n, DRS_board)
     print("##### Create differential voltage ROOT_file! #####")
 
