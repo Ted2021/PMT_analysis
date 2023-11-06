@@ -5,7 +5,7 @@ import sys
 import pandas as pd
 import os
 
-def Counts_AP_K(file_diff, file_wf, DIFF_THRES, PEAK_THRES, N_pd_path, N_pd, K_pd, tree_dif = "Treediff_0", tree_wf = "Treesource_0", QD=False):
+def Counts_AP_K(file_diff, file_wf, DIFF_THRES, PEAK_THRES, N_pd_path, N_pd, K_pd, tree_dif = "Treediff_0", tree_wf = "Treesource_0", branch_diff = "diffwf", branch_off = "wform", QD=False):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Kiyomoto_method.h")
     #清本法で、永吉法で得られたAP_Eventを検討する
     #df = pd.read_pickle(N_pd)
@@ -26,7 +26,7 @@ def Counts_AP_K(file_diff, file_wf, DIFF_THRES, PEAK_THRES, N_pd_path, N_pd, K_p
     p7 = RT.std.vector(float)() 
     p8 = RT.std.vector(float)() 
     p9 = RT.std.vector(int)()
-    RT.JudgeAPevent4(file_diff, tree_dif, file_wf, tree_wf, 1024, DIFF_THRES, PEAK_THRES, 2.4,2.4,event_list,seg_list,p1,p2,p3,p4,p5,p6,p7,p8,p9)
+    RT.JudgeAPevent4(file_diff, tree_dif, file_wf, tree_wf, 1024, DIFF_THRES, PEAK_THRES, 2.4,2.4,event_list,seg_list,p1,p2,p3,p4,p5,p6,p7,p8,p9,5,10, branch_diff, branch_off)
     
     #これまでの解析結果をpd.Dataframeにまとめる
     K = pd.DataFrame({'event':e,

@@ -10,9 +10,16 @@ def Generate_WFORM_File(file, file_wf, avg_pkl, tree_s = "Treesource_0", tree_wf
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
     av_wave = RT.std.vector(float)(np.array(pd.read_pickle(avg_pkl)))
     RT.CalcWform2(file, tree_s, file_wf, tree_wf, av_wave)
-    print("##### Generate wform ROOT file!! #####")
+    print('\033[31m' + "##### Generate wform ROOT file!! #####" + '\033[0m')
 
-def Counts_AP_S(file_wf, S_pd, PEAK_THES, CONTI_THES, INT_s, INT_e, avg_pkl, tree_wf="Treesource_0"):
+def Generate_WFORM_branch(file, tree, avg_pkl, length = 1024, branch_wf = "wform", name2 = "wf_off[1024]/F"):
+    #マクロの読み込み
+    #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
+    av_wave = RT.std.vector(float)(np.array(pd.read_pickle(avg_pkl)))
+    RT.ClacWf_branch(file, tree, av_wave, length, branch_wf, name2)
+    print('\033[31m' + "##### Generate wform ROOT file!! #####" + '\033[0m')
+
+def Counts_AP_S(file_wf, S_pd, PEAK_THES, CONTI_THES, INT_s, INT_e, avg_pkl, tree_wf="Treesource_0", branch = "wform"):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Sakurai_method.h")
     av_wave = RT.std.vector(float)(np.array(pd.read_pickle(avg_pkl)))
     event = RT.std.vector(int)()
@@ -21,7 +28,7 @@ def Counts_AP_S(file_wf, S_pd, PEAK_THES, CONTI_THES, INT_s, INT_e, avg_pkl, tre
     counts = RT.std.vector(int)()
     #PEAK_THES = 20
     #CONTI_THES = 3
-    RT.CountAPeventFromPH4(file_wf, tree_wf, 1024, PEAK_THES, CONTI_THES, INT_s, INT_e, av_wave, event, seg, peak, counts)
+    RT.CountAPeventFromPH4(file_wf, tree_wf, 1024, PEAK_THES, CONTI_THES, INT_s, INT_e, av_wave, event, seg, peak, counts, branch)
 
 
     df = pd.DataFrame({'event':np.array(event),

@@ -6,6 +6,15 @@ import pandas as pd
 import os
 import glob
 
+
+#標準出力の色を指定
+RED = '\033[31m'
+BLUE = '\033[34m'
+GREEN = '\033[32m'
+YELLOW = '\033[33m'
+END = '\033[0m'
+
+
 def Combine_DF(path, DF_name, Chrg_pkl, DF_com_name):
     DF1 = pd.read_pickle(path+"/AP0000/"+DF_name)
     DF2 = pd.read_pickle(path+"/AP0950/"+DF_name)
@@ -246,5 +255,29 @@ def Merge_DF2(df_list, path, file_name):
         if os.path.exists("{0}ap_result/".format(path)) == False:
             os.mkdir("{0}ap_result/".format(path))
         Case.to_pickle("{0}ap_result/".format(path)+file_name)
+
+def Merge_all_result(df_list, timing_list, new_df, chrg_in = False, chrg = 0.0):
+    
+    #全てのSeqのAPのDataFrame
+    DF_all = pd.DataFrame()
+
+    #各DataFrameごとの結果をまとめる
+    for (item, t_s) in zip(df_list, timing_list):
+        #とりあえずDataFrameを読む
+        Df_temp = pd.read_pickle(item)
+        #時間情報をDataFrameに追加
+        Df_temp["time"] = np.array(Df_temp["seg"])*1000/1024 + t_s
+
+        if chrg_in == True:
+            Df_temp["PE"] = np.array(Df_temp["charge"])/chrg
+            
+            if 'charge_3sig' in Df_temp.columns:
+                Df_temp["PE_3sig"] = np.array(Df_temp["charge_3sig"])/chrg
+
+        DF_all = pd.concat([DF_all, Df_temp], ignore_index = True)
+
+    display(DF_all)
+    DF_all.to_pickle(new_df)
+    print(RED + "##### DataFrame Combine Done! #####" + END)
 
 

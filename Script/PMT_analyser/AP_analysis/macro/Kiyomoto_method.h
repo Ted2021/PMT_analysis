@@ -245,7 +245,7 @@ void JudgeAPevent(TString filesrc_s, TString treename_s, TString filesrc_d, TStr
     tr_s->SetBranchAddress("time",time_s);
     tr_s->SetBranchAddress("diffwf",diff_wf);
     tr_d->SetBranchAddress("time",time_d);
-    tr_d->SetBranchAddress("wform",wform);
+    tr_d->SetBranchAddress("wform", wform);
 
     //永吉法で見つかったAP_eventの長さ
     std::size_t size = event.size();
@@ -677,7 +677,7 @@ void JudgeAPevent4(TString filesrc_s, TString treename_s, TString filesrc_d, TSt
     std::vector<int> &par, std::vector<int> &par2, std::vector<int> &par3, std::vector<int> &par4,
     std::vector<int> &par5, std::vector<float> &par6, std::vector<float> &par7,std::vector<float> &par8,
     std::vector<int> &par9,
-    int limit_d = 5, int limit_u = 10)
+    int limit_d = 5, int limit_u = 10, TString Branch_diff = "diffwf", TString Branch_off = "wform")
 {
     //ROOTファイルの読み込み
     TFile* f_s = TFile::Open(filesrc_s);
@@ -691,9 +691,9 @@ void JudgeAPevent4(TString filesrc_s, TString treename_s, TString filesrc_d, TSt
     float time_d[slice];
     float wform[slice];
     tr_s->SetBranchAddress("time",time_s);
-    tr_s->SetBranchAddress("diffwf",diff_wf);
+    tr_s->SetBranchAddress(Branch_diff,diff_wf);
     tr_d->SetBranchAddress("time",time_d);
-    tr_d->SetBranchAddress("wform",wform);
+    tr_d->SetBranchAddress(Branch_off,wform);
 
     //永吉法で見つかったAP_eventの長さ
     std::size_t size = event.size();

@@ -5,9 +5,10 @@ import sys
 import pandas as pd
 import os
 
-def Calc_AP_Charge_ph(file, tree, av_wf_d, AP_df, branch_t = "time", branch_w = "wform", cell=1024):
+def Calc_AP_Charge_ph(file, tree, dark_wf, AP_df, branch_t = "time", branch_w = "wform", cell=1024):
     #AP_file avg_wf
-    avg_wf = RT.std.vector(float)(pd.read_pickle(av_wf_d))
+    #dark_wf = pd.read_pickle(av_wf_d)
+    avg_wf = RT.std.vector(float)(dark_wf)
     #AP catarog
     AP_cat = pd.read_pickle(AP_df)
     event = RT.std.vector(int)(np.array(AP_cat["event"]))
@@ -63,9 +64,10 @@ def Calc_AP_Charge2_QD(file, tree, av_wf_d, AP_df, name_np, branch_t = "time", b
     #return AP_cat
 """
 
-def Calc_AP_Charge_3sig(file, tree, av_wf_d, AP_df, branch_t = "time", branch_w = "wform", cell = 1024):
+def Calc_AP_Charge_3sig(file, tree, dark_wf, AP_df, branch_t = "time", branch_w = "wform", cell = 1024):
     #AP_file avg_wf
-    avg_wf = RT.std.vector(float)(pd.read_pickle(av_wf_d))
+    #avg_wf = RT.std.vector(float)(pd.read_pickle(av_wf_d))
+    avg_wf = RT.std.vector(float)(dark_wf)
     #AP catarog
     AP_cat = pd.read_pickle(AP_df)
     #RS = AP_cat[AP_cat["Label"] == 1]
@@ -116,8 +118,8 @@ def Calc_AP_Charge_K(file, tree, av_wf_d, AP_df, QD_df, branch_t = "time", branc
 
 def Calc_AP_Charge_K2(file, tree, av_wf_d, AP_df, 
                       branch_t = "time", branch_w = "wform", cell = 1024):
-    Calc_AP_Charge_ph(file, tree, av_wf_d, AP_df)
-    Calc_AP_Charge_3sig(file, tree, av_wf_d, AP_df)    
+    Calc_AP_Charge_ph(file, tree, av_wf_d, AP_df, branch_t, branch_w, cell)
+    Calc_AP_Charge_3sig(file, tree, av_wf_d, AP_df, branch_t, branch_w, cell)    
     
     print("##### Calc Chrg of K_method      #####")   
 

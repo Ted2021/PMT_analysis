@@ -30,8 +30,8 @@ if __name__ == '__main__':
     avg_fig = "Avg_multi.png"
     chrg_pkl = "chrg_multi.pkl"
     chrg_fig = "Chrg_multi.png"
-    histX_pkl = "histX_.pkl"
-    histY_pkl = "histY_.pkl"
+    histX_pkl = "histX_multi.pkl"
+    histY_pkl = "histY_multi.pkl"
     para_pkl = "para_multi.pkl"
 
     """

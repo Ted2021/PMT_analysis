@@ -303,6 +303,61 @@ void CalcDiffWform2(TString filesrc, TString treename, TString Diffwf_ROOT_file,
     f_s->Close();
 }
 
+void CalcDiffWform_branch(TString filesrc, TString treename, 
+                          std::vector<float> &av_wf, int length = 1024, 
+                          TString branch_time = "time", TString branch_wf = "wform", 
+                          TString name = "dtime[1023]/F",  TString name2 = "diffwf[1023]/F")
+{
+    //ROOTの初期設定
+    gROOT -> Reset();
+    gStyle -> SetOptStat(1001110);
+
+    //既存のROOTファイルを開く
+    TFile *f_s = TFile::Open(filesrc, "UPDATE"); 
+    TTree* tr_s = (TTree*)f_s->Get(treename);
+
+    float time_s[length];
+    float wform_s[length];
+    tr_s->SetBranchAddress(branch_time, time_s);
+    tr_s->SetBranchAddress(branch_wf,wform_s);
+
+    //微分波形をエントリするためのメモリ
+    float diffwf[length-1];
+    float dtime[length-1];
+    //tr_s->Branch("dtime", dtime, name);
+    auto newBranch_t = tr_s->Branch("dtime", dtime, name);
+    //tr_s->Branch("diffwf", diffwf, name2);
+    auto newBranch_w = tr_s->Branch("diffwf", diffwf, name2);
+
+    //総イベント数を取得
+    int nEve = tr_s->GetEntries(); 
+
+    //イベントの数だけ繰り返す  
+    for(int i=0;i<nEve;i++)
+    {
+        //i番目のイベントを読み込む
+        tr_s->GetEntry(i);
+
+        //セグメントの数-1だけ繰り返す 差分を取るため、segment1から始める (DRS4では1024固定)
+        for(int l=1;l<length;l++)
+        {   
+
+            //取得時間を新しいROOTファイルのBranchにinput
+            dtime[l] = time_s[l];
+            //1イベント前との差動電圧の差(微分電圧)を新しいROOTファイルのBrachにinput
+            //###ここも修正必要あり
+            diffwf[l] = (wform_s[l] - av_wf[l]) - (wform_s[l-1] - av_wf[l-1]);
+        }
+        newBranch_t->Fill();
+        newBranch_w->Fill();
+
+        //tr_s->Fill();
+    }
+    tr_s->Write("", TObject::kOverwrite);
+    //ROOTファイルの書き込み
+    f_s->Close();
+
+}
 
 //微分波形をY軸方向に射影する関数(+singleGaussianでFit)
 

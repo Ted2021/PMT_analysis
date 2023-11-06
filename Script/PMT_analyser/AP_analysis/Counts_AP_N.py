@@ -10,7 +10,12 @@ def Generate_DIFF_File(file, file_diff, avg_pkl, tree_s = "Treesingle_0", tree_d
     avg_wf_d = RT.std.vector(float)(pd.read_pickle(avg_pkl))
     #print(avg_wf_d)
     RT.CalcDiffWform4(file, tree_s, file_diff, tree_dif, avg_wf_d)
-    print("##### Generate Diff ROOT file!! #####")
+    print('\033[31m' + "##### Generate Diff ROOT file!! #####" + '\033[0m')
+
+def Calc_DIFF_wf(file, tree, avg_wf = RT.std.vector(float)(np.zeros(1024))):
+    #avg_wf = RT.std.vector(float)(pd.read_pickle(avg_pkl))
+    RT.CalcDiffWform_branch(file, tree, avg_wf)
+    print('\033[31m' + "##### Generate Diff ROOT file!! #####" + '\033[0m')
 
 def Define_DIFF_THRES(file_diff, tree_dif="Treediff_0", draw = False):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Nagayoshi_method.h")

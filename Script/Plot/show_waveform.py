@@ -24,6 +24,12 @@ elif CH == "AP":
     tree_O.Draw("wform1-wform0:time>>(1024,0,1000,1024,-50,200)","","colz",int(events), 0)
 elif CH == "AP_reg":
     tree_O.Draw("wformNeg - wformPos :time>>(1024,0,1000,1024,-50,200)","","colz",int(events), 0)
+elif CH == "AP_sabun":
+    tree_O.Draw("wform:time>>(1024,0,1000,1024,-50,800)","","colz",int(events), 0)
+elif CH == "AP_diff":
+    tree_O.Draw("diffwf:dtime>>(1024,0,1000,1024,-50,200)","","colz",int(events), 0)
+elif CH == "AP_off":
+    tree_O.Draw("wf_off:time>>(1024,0,1000,1024,-50,200)","","colz",int(events), 0)
 else:
     print("ERROR: please set correct args!! 10 or 32")
     sys.exit()
@@ -35,13 +41,15 @@ text = args[1].split('.')
 title = text[0] + " " + args[2] + " " + "CH" + CH[0] +" - CH" + CH[-1] + ";" + "time (ns);Vol (mV);Counts"
 #title = "CH1-CH0" + " " + args[2] + ";" + "time (ns);Vol (mV);Counts"
 obj.SetTitle(title)
+#obj.SetTitle("ZQ5531")
 c1.SetLogz()
 c1.Draw()
 #pic_name  = text[0] + "_" + args[2] + ".png"
 #pic_name2 = text[0] + "_" + args[2] + ".pdf"
 #pic_name2 = text[0] + "_" + args[2] + "_" + "CH" + CH[0] +" - CH" + CH[-1] + ".pdf"
 #pic_name2 = args[2] + "_" + "CH" + CH[0] +" - CH" + CH[-1] + ".pdf"
-pic_name2 = output_file + ".pdf"
+#pic_name2 = output_file + ".pdf"
+pic_name2 = output_file + ".png"
 #c1.SaveAs("/Users/cta/work/dora_data/pmt/230222/ZQ7568/fig/" + pic_name)
 #save_loc = "/Users/cta/work/dora_data/pmt/230518/ZQ7568/fig/" + pic_name2
 cp = subprocess.run("pwd", capture_output=True, text=True)

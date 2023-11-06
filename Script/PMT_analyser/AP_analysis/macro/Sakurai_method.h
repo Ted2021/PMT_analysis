@@ -226,6 +226,50 @@ void CalcWform2(TString filesrc, TString treename, TString New_ROOT_file, TStrin
 
 }
 
+void ClacWf_branch(TString filesrc, TString treename, 
+                   std::vector<float> &av_wf, int length = 1024, 
+                   TString branch_wf = "wform", TString name2 = "wf_off[1024]/F")
+{
+    //ROOTの初期設定
+    gROOT -> Reset();
+    gStyle -> SetOptStat(1001110);
+
+    //既存のROOTファイルを開く
+    TFile *f_s = TFile::Open(filesrc, "UPDATE"); 
+    TTree* tr_s = (TTree*)f_s->Get(treename);
+
+    float wform_s[length];
+    tr_s->SetBranchAddress(branch_wf,wform_s);
+
+    //偏差波形をエントリするためのメモリ
+    float wf_off[length];
+    //tr_s->Branch("wf_off", wf_off, name2);
+    auto newBranch_w = tr_s->Branch("wf_off", wf_off, name2);
+
+    //総イベント数を取得
+    int nEve = tr_s->GetEntries();
+
+    //イベントの数だけ繰り返す  
+    for(int i=0;i<nEve;i++)
+    {
+        //i番目のイベントを読み込む
+        tr_s->GetEntry(i);
+
+        //セグメントの数-1だけ繰り返す 差分を取るため、segment1から始める (DRS4では1024固定)
+        for(int l=0;l<length;l++)
+        {   
+            //1イベント前との差動電圧の差(微分電圧)を新しいROOTファイルのBrachにinput
+            wf_off[l] = (wform_s[l] - av_wf[l]);
+        }
+        newBranch_w->Fill();
+        //tr_s->Fill();
+    }
+    tr_s->Write("", TObject::kOverwrite);
+    //ROOTファイルの書き込み
+    f_s->Close();
+
+}
+
 //とりあえず4番目を使用する
 //生波形の波高値からAP_eventをカウントする関数
 void CountAPeventFromPH(TString filesrc, TString treename, int seg, float PH_THRES, int int_start, int int_end, std::vector<int> &par, std::vector<int> &par2, std::vector<float> &par3, std::vector<int> & par4)
@@ -440,14 +484,14 @@ void CountAPeventFromPH3(TString filesrc, TString treename, int seg, float PH_TH
 }
 
 //CalcWformで得たROOTファイルを用いてAP_eventをカウントする関数(連続してn点を超えた場合)
-void CountAPeventFromPH4(TString filesrc, TString treename, int seg, float PH_THRES, int CONTI_THES, int int_start, int int_end, std::vector<float> &av_wf, std::vector<int> &par, std::vector<int> &par2, std::vector<float> &par3, std::vector<int> & par4)
+void CountAPeventFromPH4(TString filesrc, TString treename, int seg, float PH_THRES, int CONTI_THES, int int_start, int int_end, std::vector<float> &av_wf, std::vector<int> &par, std::vector<int> &par2, std::vector<float> &par3, std::vector<int> & par4, TString branch_name = "wform")
 {
     TFile* f = TFile::Open(filesrc);
     TTree* tr = (TTree*)f->Get(treename);
     float time[seg];
     float wform[seg];
     tr->SetBranchAddress("time",time);
-    tr->SetBranchAddress("wform", wform);
+    tr->SetBranchAddress(branch_name, wform);
 
     int nEve = tr->GetEntries();
 
