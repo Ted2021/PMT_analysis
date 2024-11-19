@@ -65,3 +65,7 @@ def Merge_ROOT_file(RT_file1, RT_file2, RT_new, rm_file = False):
         subprocess.run(["rm", RT_file1])
         subprocess.run(["rm", RT_file2])
     print("##### Merge ROOT_file! #####")
+
+def Copy_ROOT_file(file_old, Tree_old, file_new, Tree_new, branch_t, branch_wf):
+    RT.Copy_RTfile(file_old, Tree_old, file_new, Tree_new, branch_t, branch_wf)
+    print("##### Copy ROOT_file! #####")

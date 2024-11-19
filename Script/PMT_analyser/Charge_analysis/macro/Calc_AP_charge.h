@@ -54,7 +54,7 @@ void CalcAPCharge(TString filesrc, TString treename, int cell, std::vector<float
 //APの電荷量を計算する関数(APのピーク位置のみわかる場合)
 void CalcAPCharge2(TString filesrc, TString treename, int cell, 
                     std::vector<float> &av_wf_d, std::vector<int> &event, std::vector<int> &seg, std::vector<float> &chrg,
-                    TString Branch_time = "time", TString Branch_wf ="wfrom")
+                    TString Branch_time = "time", TString Branch_wf ="wfrom", int INT_RANGE =  15)
 {
     //SourceとDarkのファイル読み込み
     TFile* f = TFile::Open(filesrc);
@@ -69,7 +69,7 @@ void CalcAPCharge2(TString filesrc, TString treename, int cell,
     std::size_t array_size = event.size();
     float charge = 0;
     int target_seg;
-    int INT_RANGE = 15;
+    //int INT_RANGE = 15;
 
 
     for(int i=0;i<array_size;i++)

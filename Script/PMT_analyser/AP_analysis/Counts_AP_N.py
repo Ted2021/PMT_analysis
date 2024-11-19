@@ -17,19 +17,19 @@ def Calc_DIFF_wf(file, tree, avg_wf = RT.std.vector(float)(np.zeros(1024))):
     RT.CalcDiffWform_branch(file, tree, avg_wf)
     print('\033[31m' + "##### Generate Diff ROOT file!! #####" + '\033[0m')
 
-def Define_DIFF_THRES(file_diff, tree_dif="Treediff_0", draw = False):
+def Define_DIFF_THRES(file_diff, tree_dif="Treediff_0", draw = False, title = "hoge.png"):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/AP_analysis/Nagayoshi_method.h")
     par = RT.std.vector(float)()
     par_e = RT.std.vector(float)()
     hist1 = RT.DiffWformProjection(file_diff, tree_dif, par, par_e, 60, 1000)
     if draw == True:
-        canvas = RT.TCanvas("c", "c", 600, 600)
+        canvas = RT.TCanvas("c", "c", 800, 600)
         hist1.Draw()
         canvas.SetLogy()
-        canvas.SaveAs("Diff_wf_hist.png")
+        canvas.SaveAs(title)
         #canvas.Draw()
     print("##### Difine DIFF_THRES!! #####")
-    return par[2] * 3
+    return list(par), list(par_e)
 
 
 def Counts_AP_N(file_diff, N_pd, DIFF_THRES, INT_s, INT_e, tree_dif="Treediff_0"):

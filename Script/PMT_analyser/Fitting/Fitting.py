@@ -5,13 +5,13 @@ import sys
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def Find_Fit_Para(hst, name_h1, name_h2):
+def Find_Fit_Para(hst, name_h1, name_h2, single_pe_lower_lim=10):
     #hist = plt.hist(chrg, bins = nbins)
     hist_value = pd.DataFrame({'X':[hst.GetXaxis().GetBinCenter(i) for i in range(hst.GetNbinsX())],
                                 'Y':[hst.GetBinContent(i) for i in range(hst.GetNbinsX())]
                             })
-    mean = np.mean(hist_value[hist_value["Y"] == np.max(hist_value[hist_value["X"] > 10]["Y"])]["X"])
-    height = np.mean(hist_value[hist_value["Y"] == np.max(hist_value[hist_value["X"] > 10]["Y"])]["Y"])
+    mean = np.mean(hist_value[hist_value["Y"] == np.max(hist_value[hist_value["X"] > single_pe_lower_lim]["Y"])]["X"])
+    height = np.mean(hist_value[hist_value["Y"] == np.max(hist_value[hist_value["X"] > single_pe_lower_lim]["Y"])]["Y"])
     sigma = mean/2
 
     with open(name_h1, "wb") as f:
@@ -22,28 +22,44 @@ def Find_Fit_Para(hst, name_h1, name_h2):
     print("##### determine the syokiti #####")
     return mean, height, sigma, np.array(hist_value["X"]), np.array(hist_value["Y"])
 
-def Fit_trpl_Gauss(hst, mean, height, sigma, fit_range, name_f):
+def Find_Fit_Para_py(hst):
+    #hist = plt.hist(chrg, bins = nbins)
+    hist_value = pd.DataFrame({'X':np.append(hst[0], 0.000e+00),
+                                'Y':hst[1]
+                            })
+    mean = np.mean(hist_value[hist_value["Y"] == np.max(hist_value[hist_value["X"] > 10]["Y"])]["X"])
+    height = np.mean(hist_value[hist_value["Y"] == np.max(hist_value[hist_value["X"] > 10]["Y"])]["Y"])
+    sigma = mean/2
+
+    print("##### determine the syokiti #####")
+    return mean, height, sigma, np.array(hist_value["X"]), np.array(hist_value["Y"])
+
+def Fit_trpl_Gauss(hst, mean, height, sigma, fit_range, name_f, title = "hoge.png"):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
     fit_para = RT.std.vector(float)()
     fit_para_e = RT.std.vector(float)()
-    RT.Fit_trpl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1])
+    RT.Fit_trpl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1], title)
 
     with open(name_f, "wb") as f:
         pickle.dump(np.array(fit_para), f)
-        pickle.dump(np.array(fit_para_e), f)
+        #pickle.dump(np.array(fit_para_e), f)
+        #pickle.dump(list(fit_para) + list(fit_para_e), f)
 
     print("##### Complete Fitting #####")
+
+    del hst
+
     return list(fit_para), list(fit_para_e)
 
-def Fit_sgl_Gauss(hst, mean, height, sigma, fit_range, name_f):
+def Fit_sgl_Gauss(hst, mean, height, sigma, fit_range, name_f, figname = "hoge.png"):
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Fitting/Fitting.h")
     fit_para = RT.std.vector(float)()
     fit_para_e = RT.std.vector(float)()
-    RT.Fit_sgl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1])
+    RT.Fit_sgl_Gauss(hst, fit_para, fit_para_e, mean, height, sigma, fit_range[0], fit_range[1], figname)
 
     with open(name_f, "wb") as f:
-        pickle.dump(np.array(fit_para), f)
-        pickle.dump(np.array(fit_para_e), f)
+        pickle.dump(list(fit_para) + list(fit_para_e), f)
+        #pickle.dump(np.array(fit_para_e), f)
 
     print("##### Complete Fitting #####")
 
@@ -81,7 +97,7 @@ def Fig_Plot(X, Y, para, fig_name, bins = 330):
     #plt.show()
     print("##### Create charge dist! #####")
 
-def Fig_Plot_multi(X, Y, para, fig_name, bins = 330):
+def Fig_Plot_multi(X, Y, para, fig_name, bins = 330, title_ms = " "):
     fig, ax = plt.subplots()
     ax.plot(X,Y,c="blue", label="Charge Dist.")
     y_best = gau(X, para[0], para[1], para[2])
@@ -91,6 +107,7 @@ def Fig_Plot_multi(X, Y, para, fig_name, bins = 330):
     ax.set_ylim(0.6, np.max(y_best)+100)
     plt.xlabel("Charge (mV*ns)")
     plt.ylabel("#Events")
+    plt.title(title_ms)
     plt.legend()
     plt.savefig(fig_name)
     #plt.show()

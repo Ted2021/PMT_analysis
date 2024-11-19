@@ -5,6 +5,7 @@ from .Counts_AP_N import *
 from .Counts_AP_S import *
 from .Counts_AP_K import *
 from .Combine import *
+from .Result import *
 
 path = __file__.split("__init__.py")
 RT.gROOT.LoadMacro(path[0] + "macro/Kiyomoto_method.h")

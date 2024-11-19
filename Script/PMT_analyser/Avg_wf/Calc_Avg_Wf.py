@@ -4,7 +4,7 @@ import pickle
 import sys
 import matplotlib.pyplot as plt
 
-def Calc_Avg_Wf(file, dfile, name_s, name_d,
+def Calc_Avg_wf_both(file, dfile, name_s, name_d,
                 tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024, mode = "all"):
     #マクロの読み込み
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
@@ -74,7 +74,7 @@ def Calc_Avg_Wf_all(file, dfile, name_s, name_d,
     return av_time, av_wave, av_wave_d
 
 def Calc_Avg_Wf_source(file, name_s,
-                tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
+                tr_s="Treesource_0", branch_t="time", branch_w="wform", seg = 1024):
     #マクロの読み込み
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
 
@@ -91,7 +91,7 @@ def Calc_Avg_Wf_source(file, name_s,
 
 
 def Calc_Avg_Wf_dark(dfile, name_d,
-                tr_s="Treesource_0", tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
+                tr_d="Treedark_0", branch_t="time", branch_w="wform", seg = 1024):
     #マクロの読み込み
     #RT.gROOT.LoadMacro("/Users/kiyomoto/git/Script/C_macro/Avg_wf/Generate_Avg.h")
 
@@ -129,6 +129,8 @@ def Plot_Avg(av_wave, av_wave_d,fig_name, span = [-25, 50], lim = [-100, 100], p
 
     return max
 
+"""
 if __name__ == '__main__':
     args = sys.argv
     Calc_Avg_Wf(args[1], args[2], args[3])
+"""

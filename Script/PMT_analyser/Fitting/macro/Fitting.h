@@ -2,7 +2,7 @@
 #include "TH1F.h"
 #include "TF1.h"
 
-void Fit_trpl_Gauss(TH1F* hst,std::vector<float> &par,std::vector<float> &par_err, double c_x, double c_y, double c_wid, double fit_min, double fit_max)
+void Fit_trpl_Gauss(TH1F* hst,std::vector<float> &par,std::vector<float> &par_err, double c_x, double c_y, double c_wid, double fit_min, double fit_max, TString title="hoge.png")
 {
     //初期値の設定
     Double_t par_ped[3]={1e4,0,3};
@@ -76,10 +76,20 @@ void Fit_trpl_Gauss(TH1F* hst,std::vector<float> &par,std::vector<float> &par_er
         par.push_back(f_ped_double->GetParameter(i));
 	    par_err.push_back(f_ped_double->GetParError(i));
     }
-    
+    // キャンバスを作成
+    TCanvas *canvas = new TCanvas("myCanvas", "My Canvas", 800, 600);
+
+    // ヒストグラムを描画
+    hst->Draw();
+    //ログスケール
+    canvas->SetLogy();
+    // 画像ファイルとして保存
+    canvas->SaveAs(title);
+    delete hst;
+    delete canvas;
 }
 
-void Fit_sgl_Gauss(TH1F* hst, std::vector<float> &par, std::vector<float> &par_err, double p1, double p2, double p3, double fit_min, double fit_max)
+void Fit_sgl_Gauss(TH1F* hst, std::vector<float> &par, std::vector<float> &par_err, double p1, double p2, double p3, double fit_min, double fit_max, TString title = "hoge.png")
 {
     //初期値の設定
     Double_t par_ped[3]={p1, p2, p3};
@@ -102,5 +112,17 @@ void Fit_sgl_Gauss(TH1F* hst, std::vector<float> &par, std::vector<float> &par_e
         par.push_back(f_ped->GetParameter(i));
         par_err.push_back(f_ped->GetParError(i));
     }
+
+    // キャンバスを作成
+    TCanvas *canvas = new TCanvas("myCanvas", "My Canvas", 800, 600);
+
+    // ヒストグラムを描画
+    hst->Draw();
+    //ログスケール
+    canvas->SetLogy();
+    // 画像ファイルとして保存
+    canvas->SaveAs(title);
+    delete hst;
+    delete canvas;
     
 }

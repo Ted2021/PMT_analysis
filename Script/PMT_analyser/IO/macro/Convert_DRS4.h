@@ -130,7 +130,7 @@ void ConvertFile(TString filesrc, TString treename, TString new_ROOT_file, TStri
     gStyle -> SetOptStat(1001110);
 
     //新しいTFileとTTreeを定義する
-    TFile* f_new = new TFile(new_ROOT_file, "recreate");
+    TFile* f_new = new TFile(new_ROOT_file, "update");
     TTree* tree_new = new TTree(treename_new, treename_new);
 
     //配列を格納するためのバッファ変数
@@ -201,6 +201,50 @@ void ConvertFile(TString filesrc, TString treename, TString new_ROOT_file, TStri
     }
     f_new->Write();
 
+    f->Close();
+
+}
+
+void Copy_RTfile(TString filesrc, TString treename, TString new_ROOT_file, TString treename_new,
+                TString branch_t, TString branch_w)
+{
+    gROOT ->Reset();
+    gStyle ->SetOptStat(1001110);
+
+    TFile *f = new TFile(filesrc);
+    TTree *oldtree = (TTree*) f->Get(treename);
+    //配列を用意
+    float time[1024] = {0};
+    float wf[1024] = {0};
+    //用意した配列とtree内イベントの対応付け
+    oldtree->SetBranchAddress(branch_t,time);
+    oldtree->SetBranchAddress(branch_w,wf);
+
+
+    TFile *g = new TFile(new_ROOT_file,"recreate");
+    TTree * tree = new TTree(treename_new, treename_new);
+
+    //配列を格納するためのバッファ変数
+    float time_n[1024];
+    float wf_n[1024];
+
+    //配列をbranchとしてTTreeに追加
+    tree->Branch("time", time_n, "time[1024]/F");
+    tree->Branch("wform", wf_n, "wform[1024]/F");
+
+    int LOOP = oldtree->GetEntries();
+    for(int i=0; i<LOOP; i++ )
+    {
+        oldtree->GetEntry(i);
+
+        for(int j=0; j<1024; j++)
+        {
+            time_n[j] = time[j];
+            wf_n[j] = wf[j];
+        }
+        tree->Fill();
+    }
+    g->Write();
     f->Close();
 
 }

@@ -19,13 +19,14 @@ if __name__ == '__main__':
     #input
     file = args[1]
     dfile = file
-    tr = "Treesource_0"
+    #tr = "Treesource_0"
+    tr = args[2]
     tr_d = "Treedark_0"
 
     #working
-    work_dir = args[2]
+    work_dir = args[3]
 
-    contents = args[3]
+    contents = args[4]
 
     #Output
     new_file = "new.root"
@@ -34,8 +35,8 @@ if __name__ == '__main__':
     avg_fig = "Avg.png"
     chrg_pkl = "chrg.pkl"
     chrg_fig = "Chrg.png"
-    histX_pkl = "histX_.pkl"
-    histY_pkl = "histY_.pkl"
+    histX_pkl = "histX_s.pkl"
+    histY_pkl = "histY_s.pkl"
     para_pkl = "para.pkl"
     
     #get the pass
@@ -44,22 +45,24 @@ if __name__ == '__main__':
     if contents == "0":
         create = DRS4.Create_ROOT_file_2386(file, file, work_dir, work_dir+new_file, 10, tr, tr_d)
         del create
-        avg_wf = AVG.Calc_Avg_Wf_all(work_dir+new_file, work_dir+new_file, work_dir+avg_s_pkl, work_dir+avg_d_pkl, tr_s=tr, tr_d=tr_d)
+        avg_wf = AVG.Calc_Avg_Wf_all(work_dir+new_file, work_dir+new_file, work_dir+avg_s_pkl, work_dir+avg_d_pkl, tr, tr_d)
         int_max  = AVG.Plot_Avg(avg_wf[1], avg_wf[2], work_dir+avg_fig)
-        print(str(int_max))
+        #print(str(int_max))
         #int_max = 370
         del avg_wf
         del file
-        charge = Chrg.Calc_Charge(work_dir+new_file, work_dir+new_file, int_max - 25, int_max + 50, work_dir+chrg_pkl, treename = tr, treedark = tr_d)
+        charge = Chrg.Calc_Charge(work_dir+new_file, work_dir+new_file, int_max - 25, int_max + 50, work_dir+chrg_pkl, tr, tr_d)
         hist = Chrg.Plot_Hist(charge, -20, 120)
         p = Fit.Find_Fit_Para(hist, work_dir+histX_pkl, work_dir+histY_pkl)
         para = Fit.Fit_trpl_Gauss(hist, p[0], p[1], p[2], [-20, 100], work_dir+para_pkl)
         del hist, charge, p, para
+    
     elif contents == "1":
         X = pd.read_pickle(work_dir+histX_pkl)
         Y = pd.read_pickle(work_dir+histY_pkl)
         parameter = pd.read_pickle(work_dir+para_pkl)
         #Fit.Fig_Plot(p[3],p[4], para[0], work_dir+chrg_fig)
         Fit.Fig_Plot(X,Y, parameter, work_dir+chrg_fig)
-
+        subprocess.run(["open",work_dir+chrg_fig])
+        
     print("Done!!")

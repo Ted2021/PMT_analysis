@@ -5,7 +5,7 @@ import sys
 import pandas as pd
 import os
 
-def Calc_AP_Charge_ph(file, tree, dark_wf, AP_df, branch_t = "time", branch_w = "wform", cell=1024):
+def Calc_AP_Charge_ph(file, tree, dark_wf, AP_df, branch_t = "time", branch_w = "wform", cell=1024, int_range = 15):
     #AP_file avg_wf
     #dark_wf = pd.read_pickle(av_wf_d)
     avg_wf = RT.std.vector(float)(dark_wf)
@@ -15,7 +15,7 @@ def Calc_AP_Charge_ph(file, tree, dark_wf, AP_df, branch_t = "time", branch_w = 
     seg = RT.std.vector(int)(np.array(AP_cat["seg"]))
     chrg = RT.std.vector(float)()
 
-    RT.CalcAPCharge2(file, tree, cell, avg_wf, event, seg, chrg, branch_t, branch_w)
+    RT.CalcAPCharge2(file, tree, cell, avg_wf, event, seg, chrg, branch_t, branch_w, int_range)
     AP_cat["charge"] = np.array(chrg)
     AP_cat.to_pickle(AP_df)
     """
